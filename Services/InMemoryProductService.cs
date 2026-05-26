@@ -1,5 +1,3 @@
-using CoreInventory.Models;
-
 public class InMemoryProductService
 {
     private readonly List<Product> _products;
