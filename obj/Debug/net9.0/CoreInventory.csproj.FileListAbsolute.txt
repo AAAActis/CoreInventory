@@ -33,3 +33,6 @@ C:\Users\santi\OneDrive\Desktop\ESCMB-UNC\PLA II\CoreInventory\CoreInventory\obj
 C:\Users\santi\OneDrive\Desktop\ESCMB-UNC\PLA II\CoreInventory\CoreInventory\obj\Debug\net9.0\CoreInventory.pdb
 C:\Users\santi\OneDrive\Desktop\ESCMB-UNC\PLA II\CoreInventory\CoreInventory\obj\Debug\net9.0\CoreInventory.genruntimeconfig.cache
 C:\Users\santi\OneDrive\Desktop\ESCMB-UNC\PLA II\CoreInventory\CoreInventory\obj\Debug\net9.0\ref\CoreInventory.dll
+C:\Users\Admin\CoreInventory\obj\Debug\net9.0\CoreInventory.dll
+C:\Users\Admin\CoreInventory\obj\Debug\net9.0\refint\CoreInventory.dll
+C:\Users\Admin\CoreInventory\obj\Debug\net9.0\CoreInventory.pdb
