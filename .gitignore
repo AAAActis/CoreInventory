@@ -1,0 +1,12 @@
+# Archivos de compilacion de .NET
+bin/
+obj/
+
+# Configuraciones de entorno local
+.vs/
+*.user
+appsettings.Development.json
+
+# Dependencias del Frontend (Next.js/Node)
+frontend/node_modules/
+frontend/.next/
