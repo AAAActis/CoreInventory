@@ -1,7 +1,7 @@
 'use client'
 
 import { useState, useCallback, useEffect } from 'react'
-import { fetchSystemStatus, fetchProducts } from './api'
+import { fetchSystemStatus, fetchProducts, createProduct, updateProduct, deleteProduct } from './api'
 import { Product } from './types'
 
 export function useSystemStatus() {
@@ -22,7 +22,7 @@ export function useSystemStatus() {
 
   useEffect(() => {
     checkStatus()
-    const interval = setInterval(checkStatus, 30000) // Check every 30 seconds
+    const interval = setInterval(checkStatus, 30000)
     return () => clearInterval(interval)
   }, [checkStatus])
 
@@ -51,5 +51,21 @@ export function useProducts() {
     loadProducts()
   }, [loadProducts])
 
-  return { products, isLoading, error, refetch: loadProducts }
+  const addProduct = useCallback(async (product: Omit<Product, 'id'>) => {
+    const created = await createProduct(product)
+    setProducts(prev => [...prev, created])
+    return created
+  }, [])
+
+  const editProduct = useCallback(async (id: number, product: Omit<Product, 'id'>) => {
+    await updateProduct(id, product)
+    setProducts(prev => prev.map(p => p.id === id ? { id, ...product } : p))
+  }, [])
+
+  const removeProduct = useCallback(async (id: number) => {
+    await deleteProduct(id)
+    setProducts(prev => prev.filter(p => p.id !== id))
+  }, [])
+
+  return { products, isLoading, error, refetch: loadProducts, addProduct, editProduct, removeProduct }
 }
