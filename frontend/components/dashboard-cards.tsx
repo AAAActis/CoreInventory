@@ -3,7 +3,7 @@
 import { Activity, AlertTriangle, CheckCircle, Package, XCircle } from 'lucide-react'
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card'
 import { Skeleton } from '@/components/ui/skeleton'
-import { useSystemStatus } from '@/lib/hooks'
+import { useSystemStatus, useProducts } from '@/lib/hooks'
 
 export function SystemStatusCard() {
   const { status, refetch } = useSystemStatus()
@@ -50,12 +50,12 @@ export function SystemStatusCard() {
           </button>
         )}
       </CardContent>
-      <div 
+      <div
         className={`absolute bottom-0 left-0 right-0 h-1 ${
-          status === 'online' 
-            ? 'bg-emerald-500/20' 
-            : status === 'offline' 
-              ? 'bg-red-500/20' 
+          status === 'online'
+            ? 'bg-emerald-500/20'
+            : status === 'offline'
+              ? 'bg-red-500/20'
               : 'bg-muted'
         }`}
       />
@@ -68,13 +68,14 @@ interface StatCardProps {
   value: string | number
   description?: string
   icon: React.ReactNode
+  isLoading?: boolean
   trend?: {
     value: number
     isPositive: boolean
   }
 }
 
-export function StatCard({ title, value, description, icon, trend }: StatCardProps) {
+export function StatCard({ title, value, description, icon, isLoading, trend }: StatCardProps) {
   return (
     <Card>
       <CardHeader className="flex flex-row items-center justify-between pb-2">
@@ -82,7 +83,11 @@ export function StatCard({ title, value, description, icon, trend }: StatCardPro
         <div className="text-muted-foreground">{icon}</div>
       </CardHeader>
       <CardContent>
-        <div className="text-2xl font-bold">{value}</div>
+        {isLoading ? (
+          <Skeleton className="h-8 w-16" />
+        ) : (
+          <div className="text-2xl font-bold">{value}</div>
+        )}
         {description && (
           <p className="text-xs text-muted-foreground mt-1">{description}</p>
         )}
@@ -98,26 +103,31 @@ export function StatCard({ title, value, description, icon, trend }: StatCardPro
 }
 
 export function QuickStats() {
+  const { products, isLoading } = useProducts()
+  const outOfStock = products.filter(p => p.price <= 50).length
+
   return (
     <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
       <StatCard
         title="Total Products"
-        value={124}
-        description="Across all categories"
+        value={products.length}
+        description="In inventory"
         icon={<Package className="h-4 w-4" />}
-        trend={{ value: 12, isPositive: true }}
+        isLoading={isLoading}
       />
       <StatCard
-        title="Low Stock Alerts"
-        value={8}
+        title="Out of Stock"
+        value={outOfStock}
         description="Items below threshold"
         icon={<AlertTriangle className="h-4 w-4" />}
+        isLoading={isLoading}
       />
       <StatCard
-        title="Categories"
-        value={12}
-        description="Product categories"
+        title="In Stock"
+        value={products.length - outOfStock}
+        description="Available products"
         icon={<Package className="h-4 w-4" />}
+        isLoading={isLoading}
       />
     </div>
   )
@@ -153,8 +163,8 @@ export function RecentActivity() {
           {mockActivities.map((activity) => (
             <div key={activity.id} className="flex items-center gap-4">
               <div className={`h-2 w-2 rounded-full ${
-                activity.action === 'added' 
-                  ? 'bg-emerald-500' 
+                activity.action === 'added'
+                  ? 'bg-emerald-500'
                   : activity.action === 'updated'
                     ? 'bg-blue-500'
                     : 'bg-red-500'
