@@ -6,15 +6,9 @@ export async function fetchSystemStatus(): Promise<'online' | 'offline'> {
   try {
     const response = await fetch(`${API_BASE_URL}/status/ping`, {
       method: 'GET',
-      headers: {
-        'Content-Type': 'application/json',
-      },
+      headers: { 'Content-Type': 'application/json' },
     })
-    
-    if (!response.ok) {
-      return 'offline'
-    }
-    
+    if (!response.ok) return 'offline'
     const text = await response.text()
     return text.toLowerCase() === 'pong' ? 'online' : 'offline'
   } catch {
@@ -23,61 +17,37 @@ export async function fetchSystemStatus(): Promise<'online' | 'offline'> {
 }
 
 export async function fetchProducts(): Promise<Product[]> {
-  const response = await fetch(`${API_BASE_URL}/product`, {
+  const response = await fetch(`${API_BASE_URL}/products`, {
     method: 'GET',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
   })
-  
-  if (!response.ok) {
-    throw new Error(`Failed to fetch products: ${response.statusText}`)
-  }
-  
+  if (!response.ok) throw new Error(`Failed to fetch products: ${response.statusText}`)
   return response.json()
 }
 
 export async function createProduct(product: Omit<Product, 'id'>): Promise<Product> {
-  const response = await fetch(`${API_BASE_URL}/product`, {
+  const response = await fetch(`${API_BASE_URL}/products`, {
     method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
     body: JSON.stringify(product),
   })
-  
-  if (!response.ok) {
-    throw new Error(`Failed to create product: ${response.statusText}`)
-  }
-  
+  if (!response.ok) throw new Error(`Failed to create product: ${response.statusText}`)
   return response.json()
 }
 
-export async function updateProduct(id: number, product: Partial<Product>): Promise<Product> {
-  const response = await fetch(`${API_BASE_URL}/product/${id}`, {
+export async function updateProduct(id: number, product: Omit<Product, 'id'>): Promise<void> {
+  const response = await fetch(`${API_BASE_URL}/products/${id}`, {
     method: 'PUT',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(product),
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ id, ...product }),
   })
-  
-  if (!response.ok) {
-    throw new Error(`Failed to update product: ${response.statusText}`)
-  }
-  
-  return response.json()
+  if (!response.ok) throw new Error(`Failed to update product: ${response.statusText}`)
 }
 
 export async function deleteProduct(id: number): Promise<void> {
-  const response = await fetch(`${API_BASE_URL}/product/${id}`, {
+  const response = await fetch(`${API_BASE_URL}/products/${id}`, {
     method: 'DELETE',
-    headers: {
-      'Content-Type': 'application/json',
-    },
+    headers: { 'Content-Type': 'application/json' },
   })
-  
-  if (!response.ok) {
-    throw new Error(`Failed to delete product: ${response.statusText}`)
-  }
+  if (!response.ok) throw new Error(`Failed to delete product: ${response.statusText}`)
 }
