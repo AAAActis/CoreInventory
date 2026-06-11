@@ -1,43 +1,35 @@
 public class CustomerRepository : ICustomerRepository
 {
-    private readonly List<Customer> _customers;
-    private int _nextId;
+    private readonly AppDbContext _context;
 
-    public CustomerRepository()
+    public CustomerRepository(AppDbContext context)
     {
-        _customers = new List<Customer>
-        {
-            new Customer { Id = 1, Name = "Juan Pérez",   Email = "juan@example.com",  Phone = "123-456-7890" },
-            new Customer { Id = 2, Name = "María García", Email = "maria@example.com", Phone = "098-765-4321" }
-        };
-        _nextId = 3;
+        _context = context;
     }
 
-    public IEnumerable<Customer> GetAll() => _customers;
+    public IEnumerable<Customer> GetAll() => _context.Customers.ToList();
 
-    public Customer? GetById(int id) =>
-        _customers.FirstOrDefault(c => c.Id == id);
+    public Customer? GetById(int id) => _context.Customers.Find(id);
 
     public void Add(Customer customer)
     {
-        customer.Id = _nextId++;
-        _customers.Add(customer);
+        _context.Customers.Add(customer);
+        _context.SaveChanges();
     }
 
     public void Update(Customer customer)
     {
-        var existing = _customers.FirstOrDefault(c => c.Id == customer.Id);
-        if (existing is null) return;
-
-        existing.Name  = customer.Name;
-        existing.Email = customer.Email;
-        existing.Phone = customer.Phone;
+        _context.Customers.Update(customer);
+        _context.SaveChanges();
     }
 
     public void Delete(int id)
     {
-        var customer = _customers.FirstOrDefault(c => c.Id == id);
+        var customer = _context.Customers.Find(id);
         if (customer is not null)
-            _customers.Remove(customer);
+        {
+            _context.Customers.Remove(customer);
+            _context.SaveChanges();
+        }
     }
 }

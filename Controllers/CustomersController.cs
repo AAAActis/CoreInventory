@@ -4,73 +4,58 @@ using Microsoft.AspNetCore.Mvc;
 [ApiController]
 public class CustomersController : ControllerBase
 {
-    private readonly ICustomerRepository _repository;
+    private readonly ICustomerService _service;
 
-    public CustomersController(ICustomerRepository repository)
+    public CustomersController(ICustomerService service)
     {
-        _repository = repository;
+        _service = service;
     }
 
-    // GET /api/customers
     [HttpGet]
     public ActionResult<IEnumerable<Customer>> GetAll()
     {
-        var customers = _repository.GetAll();
-        return Ok(customers);
+        return Ok(_service.GetAll());
     }
 
-    // GET /api/customers/{id}
     [HttpGet("{id}")]
     public ActionResult<Customer> GetById(int id)
     {
-        var customer = _repository.GetById(id);
+        var customer = _service.GetById(id);
         if (customer is null)
             return NotFound($"No se encontró el cliente con Id {id}.");
-
         return Ok(customer);
     }
 
-    // POST /api/customers
     [HttpPost]
     public ActionResult<Customer> Create([FromBody] Customer customer)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-
         if (string.IsNullOrWhiteSpace(customer.Name))
             return BadRequest("El campo Name es obligatorio.");
-
-        _repository.Add(customer);
-        return CreatedAtAction(nameof(GetById), new { id = customer.Id }, customer);
+        var created = _service.Add(customer);
+        return CreatedAtAction(nameof(GetById), new { id = created.Id }, created);
     }
 
-    // PUT /api/customers/{id}
     [HttpPut("{id}")]
     public IActionResult Update(int id, [FromBody] Customer customer)
     {
         if (!ModelState.IsValid)
             return BadRequest(ModelState);
-
         if (id != customer.Id)
             return BadRequest("El Id de la ruta no coincide con el Id del cuerpo.");
-
-        var existing = _repository.GetById(id);
-        if (existing is null)
+        if (_service.GetById(id) is null)
             return NotFound($"No se encontró el cliente con Id {id}.");
-
-        _repository.Update(customer);
+        _service.Update(customer);
         return NoContent();
     }
 
-    // DELETE /api/customers/{id}
     [HttpDelete("{id}")]
     public IActionResult Delete(int id)
     {
-        var existing = _repository.GetById(id);
-        if (existing is null)
+        if (_service.GetById(id) is null)
             return NotFound($"No se encontró el cliente con Id {id}.");
-
-        _repository.Delete(id);
+        _service.Delete(id);
         return NoContent();
     }
 }

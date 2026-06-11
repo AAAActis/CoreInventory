@@ -10,3 +10,8 @@ appsettings.Development.json
 # Dependencias del Frontend (Next.js/Node)
 frontend/node_modules/
 frontend/.next/
+
+# Base de datos SQLite local
+*.db
+*.db-shm
+*.db-wal
